@@ -1,6 +1,5 @@
 const Oferta = require('../models/Oferta');
 
-// 1. Mostrar la pantalla principal y realizar la búsqueda por ID
 const mostrarPagina = async (req, res) => {
     try {
         const idBuscado = req.query.buscarId; 
@@ -17,7 +16,6 @@ const mostrarPagina = async (req, res) => {
     }
 };
 
-// 2. Lógica para el botón "Nuevo" (ID Consecutivo)
 const obtenerNuevoId = async (req, res) => {
     try {
         const ultimaOferta = await Oferta.findOne().sort({ NroId: -1 });
@@ -34,7 +32,6 @@ const obtenerNuevoId = async (req, res) => {
     }
 };
 
-// 3. Crear una nueva oferta (Guardar en MongoDB)
 const crearOferta = async (req, res) => {
     try {
         const nuevaOferta = new Oferta(req.body);
@@ -46,7 +43,6 @@ const crearOferta = async (req, res) => {
     }
 };
 
-// 4. Actualizar una oferta existente
 const actualizarOferta = async (req, res) => {
     try {
         const idBuscado = req.params.id; 
@@ -58,7 +54,6 @@ const actualizarOferta = async (req, res) => {
     }
 };
 
-// 5. Eliminar una oferta
 const eliminarOferta = async (req, res) => {
     try {
         const idBuscado = req.params.id;
@@ -69,21 +64,16 @@ const eliminarOferta = async (req, res) => {
         res.status(500).json({ exito: false, mensaje: 'Error al eliminar la oferta' });
     }
 };
-// 6. Listar TODAS las ofertas para la ventana nueva
 const listarOfertas = async (req, res) => {
     try {
-        // Buscamos todas las ofertas y las ordenamos por NroId (de menor a mayor)
         const ofertas = await Oferta.find().sort({ NroId: 1 });
-        // Mandamos los datos a una nueva vista que crearemos llamada 'lista'
         res.render('lista', { ofertas: ofertas });
     } catch (error) {
         console.error('Error al listar las ofertas:', error);
         res.status(500).send("Error al cargar la lista");
     }
 };
-// ========================================================
-// ¡IMPORTANTE! El module.exports SIEMPRE al final de todo
-// ========================================================
+
 module.exports = {
     mostrarPagina,
     obtenerNuevoId,
