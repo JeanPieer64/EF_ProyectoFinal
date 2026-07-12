@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista General de Ofertas</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #e9ecef; }
+        .container { max-width: 1000px; margin: auto; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .header-title { text-align: center; color: #333; margin-bottom: 20px; font-size: 24px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;}
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: center; }
+        th { background-color: #343a40; color: white; text-transform: uppercase; font-size: 14px;}
+        tr:nth-child(even) { background-color: #f8f9fa; }
+        tr:hover { background-color: #e2e6ea; }
+        
+        .btn-elegir { 
+            background-color: #28a745; 
+            color: white; 
+            padding: 8px 15px; 
+            text-decoration: none; 
+            border-radius: 5px; 
+            font-weight: bold; 
+            font-size: 12px;
+            transition: background 0.3s;
+        }
+        .btn-elegir:hover { background-color: #218838; }
+
+        /* Estilos del nuevo botón Volver */
+        .btn-volver {
+            display: inline-block;
+            margin-bottom: 20px;
+            background-color: #6c757d;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        .btn-volver:hover { background-color: #5a6268; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-title">Listado General de Ofertas de Empleo</div>
+    
+    <!-- NUEVO BOTÓN PARA VOLVER ATRÁS -->
+    <a href="/" class="btn-volver">Volver a la pantalla principal</a>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Nro ID</th>
+                <th>Empresa (Razón Social)</th>
+                <th>Puesto Solicitado</th>
+                <th>Pago Mensual</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (ofertas && ofertas.length > 0) { %>
+                <% ofertas.forEach(oferta => { %>
+                    <tr>
+                        <td style="font-weight: bold;"><%= oferta.NroId %></td>
+                        <td><%= oferta.Empresa ? oferta.Empresa.RazonSoc : 'Sin Empresa' %></td>
+                        <td><%= oferta.Puesto %></td>
+                        <td>S/ <%= oferta.PagoMensual %></td>
+                        <td>
+                            <a href="/?buscarId=<%= oferta.NroId %>" class="btn-elegir">ELEGIR</a>
+                        </td>
+                    </tr>
+                <% }) %>
+            <% } else { %>
+                <tr>
+                    <td colspan="5">No hay ofertas registradas en la base de datos.</td>
+                </tr>
+            <% } %>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
