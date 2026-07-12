@@ -5,39 +5,26 @@
     <title>Ofertas de Empleo</title>
     <style>
         body { font-family: Arial, sans-serif; padding: 40px 20px; background-color: #f4f6f8; color: #000; }
-        
-        /* Aumentamos el tamaño del contenedor principal a 1050px y mejoramos el padding */
         .pizarra-container { border: 2px solid #000; padding: 40px 50px; width: 1050px; margin: auto; background-color: #fff; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        
-        /* Cabecera más grande y espaciada */
         .header { display: flex; justify-content: center; align-items: center; gap: 30px; font-size: 28px; margin-bottom: 40px; letter-spacing: 1px; font-weight: bold; }
         .header button { padding: 8px 25px; border: 2px solid #000; background: transparent; cursor: pointer; border-radius: 8px; font-weight: bold; text-transform: uppercase; font-size: 15px; }
-        
-        /* Sistema de filas y columnas más holgado */
         .row { display: flex; margin-bottom: 18px; align-items: center; }
         .col { display: flex; flex-direction: column; }
-        
-        /* Etiquetas e inputs más grandes y legibles */
         label { font-size: 15px; font-weight: normal; margin-right: 10px; }
-        .input-label { width: 100px; } /* Ancho fijo para alinear los inputs de la izquierda */
-        
+        .input-label { width: 100px; }
         input[type="text"], input[type="number"] { padding: 8px 12px; border: 1px solid #888; border-radius: 4px; font-size: 15px; outline: none; }
         input[type="text"]:focus, input[type="number"]:focus { border-color: #000; }
-        
-        /* Títulos de sección */
         .section-title { text-transform: uppercase; margin-bottom: 15px; margin-top: 25px; font-size: 17px; font-weight: bold; }
-        
-        /* Tabla redimensionada */
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         table, th, td { border: 1px solid #000; text-align: center; padding: 10px; font-size: 15px; }
         th { font-weight: bold; }
-        
-        /* Botones de acción inferiores más grandes */
         .btn-crud { padding: 12px 25px; border: 1px solid #000; background: transparent; cursor: pointer; border-radius: 25px; text-transform: uppercase; font-weight: bold; font-size: 14px; transition: background 0.2s; }
         .btn-crud:hover { background: #e0e0e0; }
         .buttons-bar { display: flex; justify-content: space-around; margin-top: 50px; }
 
-        /* ESTILOS EXCLUSIVOS PARA IMPRESIÓN */
+        /* Estilo del mensaje flotante */
+        #mensaje-feedback { display: none; padding: 15px; background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 8px; text-align: center; font-weight: bold; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+
         @media print { 
             .buttons-bar, button { display: none !important; } 
             input[type="text"], input[type="number"] { border: none !important; background: transparent !important; padding: 0 !important; font-family: Arial, sans-serif !important; }
@@ -47,8 +34,10 @@
 </head>
 <body>
 
+<!-- Contenedor del mensaje flotante -->
+<div id="mensaje-feedback"></div>
+
 <div class="pizarra-container">
-    
     <div class="header">
         OFERTAS DE EMPLEO
         <button type="button" onclick="window.open('/lista', '_self')">Lista / Elegir</button>
@@ -66,15 +55,12 @@
             
             <div style="display: flex; align-items: center; width: 65%;">
                 <label style="width: 60px;">Puesto:</label>
-                <!-- Usamos flex: 1 para que el input ocupe todo el espacio sobrante -->
                 <input type="text" id="puesto" style="flex: 1;" value="<%= typeof oferta !== 'undefined' && oferta ? oferta.Puesto : '' %>">
             </div>
         </div>
     </form>
 
     <div class="row" style="align-items: flex-start; justify-content: space-between;">
-        
-        <!-- COLUMNA IZQUIERDA -->
         <div class="col" style="width: 40%;">
             <div class="section-title">EMPRESA</div>
             <div class="row"><label class="input-label">Razon Soc.:</label> <input type="text" id="razonSoc" style="flex: 1;" value="<%= typeof oferta !== 'undefined' && oferta && oferta.Empresa ? oferta.Empresa.RazonSoc : '' %>"></div>
@@ -85,7 +71,6 @@
             <div class="row"><label class="input-label">Pago Mes:</label> <input type="number" id="pagoMes" style="flex: 1;" value="<%= typeof oferta !== 'undefined' && oferta ? oferta.PagoMensual : '' %>"></div>
         </div>
 
-        <!-- COLUMNA DERECHA -->
         <div class="col" style="width: 55%;">
             <div class="section-title">REQUISITOS</div>
             <div class="row"><label style="width: 90px;">Formación:</label> <input type="text" id="formacion" style="flex: 1;" value="<%= typeof oferta !== 'undefined' && oferta && oferta.Requisitos ? oferta.Requisitos.Formacion : '' %>"></div>
@@ -102,8 +87,7 @@
                 <thead>
                     <tr><th style="width: 15%;">Nro</th><th style="width: 50%;">CONOCER</th><th style="width: 35%;">ACCIONES</th></tr>
                 </thead>
-                <tbody id="tablaConocimientos">
-                </tbody>
+                <tbody id="tablaConocimientos"></tbody>
             </table>
         </div>
     </div>
@@ -125,6 +109,14 @@
 <input type="hidden" id="datosOcultosEJS" value="<%= JSON.stringify(conocimientosEJS) %>">
 
 <script>
+    // --- Función para mostrar mensajes profesionales ---
+    function mostrarMensaje(texto) {
+        const msg = document.getElementById("mensaje-feedback");
+        msg.innerText = texto;
+        msg.style.display = "block";
+        setTimeout(() => { msg.style.display = "none"; }, 3000);
+    }
+
     let listaConocimientos = JSON.parse(document.getElementById('datosOcultosEJS').value);
 
     function pintarTabla() {
@@ -151,13 +143,12 @@
     function agregarConocimiento() {
         const input = document.getElementById('inputNuevoConoc');
         const nuevo = input.value;
-        
         if (nuevo && nuevo.trim() !== "") {
             listaConocimientos.push(nuevo.trim()); 
             pintarTabla(); 
             input.value = ''; 
         } else {
-            alert("Por favor, escriba un conocimiento en el campo primero.");
+            mostrarMensaje("Por favor, escriba un conocimiento.");
         }
     }
 
@@ -196,10 +187,8 @@
         try {
             const res = await fetch('/api/nuevo-id');
             const data = await res.json();
-            
             document.querySelectorAll('input:not(#datosOcultosEJS)').forEach(input => input.value = ''); 
             document.getElementById('nroId').value = data.nuevoId; 
-            
             listaConocimientos = []; 
             pintarTabla();
         } catch (error) { console.error(error); }
@@ -207,7 +196,7 @@
 
     async function guardarOferta() {
         const datos = obtenerDatosDelFormulario();
-        if (!datos.NroId || !datos.Puesto) return alert("Falta ingresar el Nro ID o el Puesto.");
+        if (!datos.NroId || !datos.Puesto) return mostrarMensaje("Falta ingresar Nro ID o Puesto.");
 
         try {
             const res = await fetch('/api/ofertas', {
@@ -217,15 +206,15 @@
             });
             const resultado = await res.json();
             if (resultado.exito) {
-                alert('Oferta creada en el sistema correctamente.');
-                window.location.href = `/?buscarId=${datos.NroId}`; 
-            } else { alert(resultado.mensaje); }
+                mostrarMensaje('Oferta creada correctamente.');
+                setTimeout(() => { window.location.href = `/?buscarId=${datos.NroId}`; }, 1500);
+            } else { mostrarMensaje(resultado.mensaje); }
         } catch (error) { console.error(error); }
     }
 
     async function actualizarOferta() {
         const datos = obtenerDatosDelFormulario();
-        if (!datos.NroId) return alert("Busque una oferta primero para poder actualizarla.");
+        if (!datos.NroId) return mostrarMensaje("Busque una oferta primero.");
 
         try {
             const res = await fetch(`/api/ofertas/${datos.NroId}`, {
@@ -235,22 +224,22 @@
             });
             const resultado = await res.json();
             if (resultado.exito) {
-                alert('Oferta actualizada correctamente.');
+                mostrarMensaje('Oferta actualizada correctamente.');
             }
         } catch (error) { console.error(error); }
     }
 
     async function eliminarOferta() {
         const id = document.getElementById('nroId').value;
-        if (!id) return alert("Ingrese un Nro ID para eliminar.");
+        if (!id) return mostrarMensaje("Ingrese un Nro ID para eliminar.");
         
         if (confirm(`¿Está seguro de eliminar la oferta ID: ${id}?`)) {
             try {
                 const res = await fetch(`/api/ofertas/${id}`, { method: 'DELETE' });
                 const resultado = await res.json();
                 if (resultado.exito) {
-                    alert('Oferta eliminada correctamente.');
-                    window.location.href = '/'; 
+                    mostrarMensaje('Oferta eliminada correctamente.');
+                    setTimeout(() => { window.location.href = '/'; }, 1500);
                 }
             } catch (error) { console.error(error); }
         }
