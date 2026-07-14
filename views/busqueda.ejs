@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Búsqueda por Conocimientos</title>
     <style>
-        body { font-family: Arial, sans-serif; padding: 0; margin: 0; background-color: #f4f4f4; }
+        body { font-family: 'Segoe UI', Roboto, Arial, sans-serif; padding: 0; margin: 0; background-color: #f8fafc; color: #1e293b; }
         
         .navbar-dark { background-color: #1f2937; color: white; display: flex; justify-content: space-between; align-items: center; padding: 15px 50px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); margin-bottom: 40px; }
         .navbar-dark .nav-brand { font-size: 24px; font-weight: bold; letter-spacing: 1px; color: #fff; }
@@ -12,21 +12,36 @@
         .navbar-dark .nav-links li a { color: #d1d5db; text-decoration: none; font-size: 15px; font-weight: bold; transition: all 0.3s ease; }
         .navbar-dark .nav-links li a:hover { color: #ffffff; text-shadow: 0 0 12px #60a5fa, 0 0 20px #60a5fa; }
         
-        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border: 1px solid #ccc; box-shadow: 2px 2px 10px rgba(0,0,0,0.1); }
-        h2 { text-align: center; text-transform: uppercase; font-size: 16px; margin-bottom: 30px; }
+        .container { max-width: 950px; margin: auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; }
         
-        .search-form { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; font-size: 14px; font-weight: bold;}
-        .search-form input[type="text"] { flex: 1; padding: 6px; border: 1px solid #999; }
-        .search-form button { padding: 6px 15px; border: 1px solid #999; background: #e0e0e0; cursor: pointer; font-weight: bold; }
+        h2 { text-align: center; text-transform: uppercase; font-size: 18px; margin-bottom: 30px; color: #0f172a; letter-spacing: 0.5px; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; font-weight: 800;}
         
-        table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-        th, td { border: 1px solid #000; padding: 8px; text-align: center; font-size: 14px; }
-        th { background-color: #f0f0f0; }
+        .search-container { background-color: #f1f5f9; padding: 20px 25px; border-radius: 8px; margin-bottom: 30px; display: flex; align-items: center; gap: 20px; font-size: 14px; font-weight: 600; color: #334155; border: 1px solid #e2e8f0; }
+        .search-container input[type="text"] { flex: 1; padding: 10px 15px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; transition: all 0.3s; font-size: 14px; }
+        .search-container input[type="text"]:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.2); background-color: #fff; }
         
-        .btn-imprimir { float: right; padding: 6px 15px; border: 1px solid #999; background: #e0e0e0; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .radio-group { display: flex; gap: 15px; align-items: center; background: #fff; padding: 8px 15px; border-radius: 6px; border: 1px solid #cbd5e1;}
+        .radio-group label { cursor: pointer; display: flex; align-items: center; gap: 5px; font-weight: 500;}
+        
+        .btn-buscar { padding: 10px 20px; background-color: #3b82f6; color: white; border: none; cursor: pointer; font-weight: bold; border-radius: 6px; transition: 0.2s; text-transform: uppercase; font-size: 13px; letter-spacing: 0.5px; box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2); }
+        .btn-buscar:hover { background-color: #2563eb; transform: translateY(-1px); }
+        
+        table { width: 100%; border-collapse: separate; border-spacing: 0; margin-bottom: 20px; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; }
+        th, td { padding: 14px 12px; text-align: center; font-size: 14px; }
+        th { background-color: #f8fafc; color: #475569; font-weight: 700; text-transform: uppercase; font-size: 12px; border-bottom: 2px solid #e2e8f0; letter-spacing: 0.5px;}
+        td { border-bottom: 1px solid #e2e8f0; color: #1e293b; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background-color: #f1f5f9; }
+        
+        .btn-imprimir { float: right; padding: 12px 24px; background-color: #475569; color: white; border: none; cursor: pointer; font-weight: bold; border-radius: 6px; transition: 0.2s; text-transform: uppercase; font-size: 13px; margin-top: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .btn-imprimir:hover { background-color: #334155; transform: translateY(-2px); }
+        
         .clearfix::after { content: ""; clear: both; display: table; }
 
-        @media print { .navbar-dark { display: none !important; } }
+        @media print { 
+            .navbar-dark, .search-container, .btn-imprimir { display: none !important; } 
+            .container { box-shadow: none; border: none; padding: 0; }
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
@@ -42,50 +57,54 @@
 </nav>
 
 <div class="container" id="contenido-a-imprimir">
-    <h2>BÚSQUEDA DE OFERTAS DE EMPLEO x CONOCIMIENTOS</h2>
+    <h2>Búsqueda de Ofertas de Empleo x Conocimientos</h2>
 
-    <form action="/busqueda" method="GET" class="search-form" id="formulario-busqueda">
-        <label>CONOCIMIENTOS</label>
-        <input type="text" name="conocimientos" placeholder="Java, C++, MySql" value="<%= typeof conocimientos !== 'undefined' ? conocimientos : '' %>">
-        
-        <label style="font-weight: normal;">
-            <input type="radio" name="operador" value="AND" <%= typeof operador !== 'undefined' && operador === 'AND' ? 'checked' : '' %>> AND
-        </label>
-        <label style="font-weight: normal;">
-            <input type="radio" name="operador" value="OR" <%= typeof operador !== 'undefined' && operador === 'OR' ? 'checked' : (typeof operador === 'undefined' ? 'checked' : '') %>> OR
-        </label>
-        
-        <button type="submit">BUSCAR OFERTAS</button>
+    <form action="/busqueda" method="GET" id="formulario-busqueda">
+        <div class="search-container">
+            <label>CONOCIMIENTOS:</label>
+            <input type="text" name="conocimientos" placeholder="Ej: Java, C++, MySql" value="<%= typeof conocimientos !== 'undefined' ? conocimientos : '' %>">
+            
+            <div class="radio-group">
+                <label>
+                    <input type="radio" name="operador" value="AND" <%= typeof operador !== 'undefined' && operador === 'AND' ? 'checked' : '' %>> AND
+                </label>
+                <label>
+                    <input type="radio" name="operador" value="OR" <%= typeof operador !== 'undefined' && operador === 'OR' ? 'checked' : (typeof operador === 'undefined' ? 'checked' : '') %>> OR
+                </label>
+            </div>
+            
+            <button type="submit" class="btn-buscar">BUSCAR OFERTAS</button>
+        </div>
     </form>
 
     <table>
         <thead>
             <tr>
-                <th>NRO</th>
-                <th>EMPRESA</th>
-                <th>PUESTO</th>
-                <th>PAGO MENSUAL</th>
-                <th>EXPERIENCIA</th>
+                <th>Nro</th>
+                <th>Empresa</th>
+                <th>Puesto</th>
+                <th>Pago Mensual</th>
+                <th>Experiencia</th>
             </tr>
         </thead>
         <tbody>
             <% if (typeof ofertas !== 'undefined' && ofertas.length > 0) { %>
                 <% ofertas.forEach(oferta => { %>
                     <tr>
-                        <td><%= oferta.NroId %></td>
-                        <td><%= oferta.Empresa ? oferta.Empresa.RazonSoc : '-' %></td>
+                        <td style="font-weight: bold; color: #475569;"><%= oferta.NroId %></td>
+                        <td style="font-weight: 500;"><%= oferta.Empresa ? oferta.Empresa.RazonSoc : '-' %></td>
                         <td><%= oferta.Puesto %></td>
-                        <td><%= oferta.PagoMensual %></td>
-                        <td><%= oferta.Experiencia %></td>
+                        <td style="color: #10b981; font-weight: bold;">S/ <%= oferta.PagoMensual %></td>
+                        <td><%= oferta.Experiencia %> años</td>
                     </tr>
                 <% }) %>
             <% } else if (typeof conocimientos !== 'undefined') { %>
                 <tr>
-                    <td colspan="5">No se encontraron ofertas con esos requisitos.</td>
+                    <td colspan="5" style="color: #64748b; font-style: italic; padding: 25px;">No se encontraron ofertas con esos requisitos.</td>
                 </tr>
             <% } else { %>
                 <tr>
-                    <td colspan="5">Ingrese conocimientos para realizar la búsqueda.</td>
+                    <td colspan="5" style="color: #64748b; font-style: italic; padding: 25px;">Ingrese los conocimientos en la barra superior para iniciar la búsqueda.</td>
                 </tr>
             <% } %>
         </tbody>
@@ -104,15 +123,15 @@
         document.querySelector('.btn-imprimir').style.display = 'none';
 
         const opciones = {
-            margin:       1,
-            filename:     'Busqueda_Ofertas.pdf',
+            margin:       0.5,
+            filename:     'Busqueda_Ofertas_Pro.pdf',
             image:        { type: 'jpeg', quality: 0.98 },
             html2canvas:  { scale: 2 },
             jsPDF:        { unit: 'in', format: 'letter', orientation: 'landscape' }
         };
 
         html2pdf().set(opciones).from(elemento).save().then(() => {
-            document.getElementById('formulario-busqueda').style.display = 'flex';
+            document.getElementById('formulario-busqueda').style.display = 'block';
             document.querySelector('.btn-imprimir').style.display = 'block';
         });
     }
