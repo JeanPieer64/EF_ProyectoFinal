@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Búsqueda por Conocimientos</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 30px; background-color: #f4f4f4; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border: 1px solid #ccc; box-shadow: 2px 2px 10px rgba(0,0,0,0.1); }
+        h2 { text-align: center; text-transform: uppercase; font-size: 16px; margin-bottom: 30px; }
+        
+        .search-form { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; font-size: 14px; font-weight: bold;}
+        .search-form input[type="text"] { flex: 1; padding: 6px; border: 1px solid #999; }
+        .search-form button { padding: 6px 15px; border: 1px solid #999; background: #e0e0e0; cursor: pointer; font-weight: bold; }
+        
+        table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+        th, td { border: 1px solid #000; padding: 8px; text-align: center; font-size: 14px; }
+        th { background-color: #f0f0f0; }
+        
+        .btn-imprimir { float: right; padding: 6px 15px; border: 1px solid #999; background: #e0e0e0; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .btn-volver { display: inline-block; margin-bottom: 20px; text-decoration: none; color: blue; }
+        
+        .clearfix::after { content: ""; clear: both; display: table; }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+
+    <a href="/" class="btn-volver">← Volver al Menú Principal</a>
+
+    <div class="container" id="contenido-a-imprimir">
+        <h2>BÚSQUEDA DE OFERTAS DE EMPLEO x CONOCIMIENTOS</h2>
+
+        <form action="/busqueda" method="GET" class="search-form" id="formulario-busqueda">
+            <label>CONOCIMIENTOS</label>
+            <input type="text" name="conocimientos" placeholder="Java, C++, MySql" value="<%= typeof conocimientos !== 'undefined' ? conocimientos : '' %>">
+            
+            <label style="font-weight: normal;">
+                <input type="radio" name="operador" value="AND" <%= typeof operador !== 'undefined' && operador === 'AND' ? 'checked' : '' %>> AND
+            </label>
+            <label style="font-weight: normal;">
+                <input type="radio" name="operador" value="OR" <%= typeof operador !== 'undefined' && operador === 'OR' ? 'checked' : (typeof operador === 'undefined' ? 'checked' : '') %>> OR
+            </label>
+            
+            <button type="submit">BUSCAR OFERTAS</button>
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>NRO</th>
+                    <th>EMPRESA</th>
+                    <th>PUESTO</th>
+                    <th>PAGO MENSUAL</th>
+                    <th>EXPERIENCIA</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (typeof ofertas !== 'undefined' && ofertas.length > 0) { %>
+                    <% ofertas.forEach(oferta => { %>
+                        <tr>
+                            <td><%= oferta.NroId %></td>
+                            <td><%= oferta.Empresa ? oferta.Empresa.RazonSoc : '-' %></td>
+                            <td><%= oferta.Puesto %></td>
+                            <td><%= oferta.PagoMensual %></td>
+                            <td><%= oferta.Experiencia %></td>
+                        </tr>
+                    <% }) %>
+                <% } else if (typeof conocimientos !== 'undefined') { %>
+                    <tr>
+                        <td colspan="5">No se encontraron ofertas con esos requisitos.</td>
+                    </tr>
+                <% } else { %>
+                    <tr>
+                        <td colspan="5">Ingrese conocimientos para realizar la búsqueda.</td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+        
+        <div class="clearfix">
+            <button type="button" class="btn-imprimir" onclick="generarPDF()">IMPRIMIR OFERTAS</button>
+        </div>
+    </div>
+
+    <script>
+        function generarPDF() {
+            const elemento = document.getElementById('contenido-a-imprimir');
+            
+            document.getElementById('formulario-busqueda').style.display = 'none';
+            document.querySelector('.btn-imprimir').style.display = 'none';
+
+            const opciones = {
+                margin:       1,
+                filename:     'Busqueda_Ofertas.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'landscape' }
+            };
+
+            html2pdf().set(opciones).from(elemento).save().then(() => {
+                document.getElementById('formulario-busqueda').style.display = 'flex';
+                document.querySelector('.btn-imprimir').style.display = 'block';
+            });
+        }
+    </script>
+</body>
+</html>

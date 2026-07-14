@@ -73,6 +73,31 @@ const listarOfertas = async (req, res) => {
         res.status(500).send("Error al cargar la lista");
     }
 };
+const buscarPorConocimientos = async (req, res) => {
+    try {
+        const { conocimientos, operador } = req.query;
+        let ofertas = [];
+
+        if (conocimientos) {
+            const arrayConocimientos = conocimientos.split(',').map(c => c.trim());
+
+            let filtro = {};
+            
+            if (operador === 'AND') {
+                filtro = { 'Requisitos.Conocimientos': { $all: arrayConocimientos } };
+            } else { 
+                filtro = { 'Requisitos.Conocimientos': { $in: arrayConocimientos } };
+            }
+
+            ofertas = await Oferta.find(filtro);
+        }
+
+        res.render('busqueda', { ofertas, conocimientos, operador });
+    } catch (error) {
+        console.error("Error en búsqueda:", error);
+        res.status(500).send("Error interno del servidor");
+    }
+};
 
 module.exports = {
     mostrarPagina,
@@ -80,5 +105,6 @@ module.exports = {
     crearOferta,
     actualizarOferta,
     eliminarOferta,
-    listarOfertas
+    listarOfertas,
+    buscarPorConocimientos
 };
